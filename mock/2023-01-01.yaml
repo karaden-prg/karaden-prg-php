@@ -1,0 +1,776 @@
+openapi: 3.0.3
+x-stoplight:
+  id: 86da2euinng2g
+info:
+  title: Karaden API
+  description: This is a Karaden API based on the OpenAPI 3.0 specification.
+  version: '2023-01-01'
+servers:
+  - url: 'http://localhost/api'
+  - url: 'https://dev.cpaas-karaden.com/api'
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: APIにアクセスするためのアクセストークンです。
+  schemas:
+    Message:
+      type: object
+      x-internal: true
+      description: ''
+      title: メッセージ
+      x-examples:
+        example-1:
+          id: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+          object: message
+          service_id: 1
+          billing_address_id: 1
+          to: '09012345678'
+          body: 本文
+          tags:
+            - string
+          is_shorten: true
+          result: done
+          status: done
+          sent_result: none
+          carrier: docomo
+          charged_count_per_sent: 0
+          scheduled_at: '2020-01-31T23:59:59+09:00'
+          limited_at: '2020-01-31T23:59:59+09:00'
+          sent_at: '2020-01-31T23:59:59+09:00'
+          received_at: '2020-01-31T23:59:59+09:00'
+          charged_at: '2020-01-31T23:59:59+09:00'
+          created_at: '2020-01-31T23:59:59+09:00'
+          updated_at: '2020-01-31T23:59:59+09:00'
+      properties:
+        id:
+          type: string
+          example: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+          description: メッセージID
+          format: uuid
+          readOnly: true
+        object:
+          type: string
+          default: message
+          example: message
+          description: オブジェクトの型
+          enum:
+            - message
+          readOnly: true
+        service_id:
+          type: integer
+          example: 1
+          description: サービス設定ID
+        billing_address_id:
+          type: integer
+          description: 請求先ID
+          example: 1
+          readOnly: true
+        to:
+          type: string
+          example: '09012345678'
+          description: 送信先電話番号
+          pattern: '^[0-9]{11}$'
+        body:
+          type: string
+          example: 本文
+          description: 本文
+        tags:
+          type: array
+          description: タグ
+          items:
+            type: string
+          readOnly: true
+        'tags[]':
+          type: array
+          description: |
+            タグ
+          items:
+            type: string
+          writeOnly: true
+        is_shorten:
+          type: boolean
+          description: 短縮URL
+        result:
+          type: string
+          enum:
+            - done
+            - processing
+          description: 結果
+          readOnly: true
+        status:
+          type: string
+          enum:
+            - done
+            - waiting
+            - error
+            - canceled
+          description: 状態
+          readOnly: true
+        sent_result:
+          type: string
+          enum:
+            - none
+            - received
+            - unconnected
+            - error
+            - unknown
+          description: 送達結果
+          readOnly: true
+        carrier:
+          type: string
+          enum:
+            - docomo
+            - softbank
+            - au
+            - rakuten
+            - checking
+            - unknown
+          description: キャリア
+          readOnly: true
+        charged_count_per_sent:
+          type: integer
+          description: 課金対象通数
+          example: 1
+          readOnly: true
+        scheduled_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信予定日時<br>（ISO 8601形式）
+          format: date-time
+        limited_at:
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信限度日時<br>（ISO 8601形式）
+          format: date-time
+          type: string
+        sent_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信日時<br>（ISO 8601形式）
+          format: date-time
+          readOnly: true
+        received_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 着信日時<br>（ISO 8601形式）
+          format: date-time
+          readOnly: true
+        charged_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 課金確定日時<br>（ISO 8601形式）
+          format: date-time
+          readOnly: true
+        created_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 受付日時<br>（ISO 8601形式）
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          description: 更新日時<br>（ISO 8601形式）
+          format: date-time
+          example: '2020-01-31T23:59:59+09:00'
+          readOnly: true
+      required:
+        - service_id
+        - to
+        - body
+    SentMessage:
+      type: object
+      x-internal: true
+      description: ''
+      title: メッセージ
+      x-examples:
+        example-1:
+          id: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+          object: message
+          service_id: 1
+          billing_address_id: 1
+          to: '09012345678'
+          body: 本文
+          tags:
+            - string
+          is_shorten: true
+          result: done
+          status: done
+          sent_result: none
+          carrier: docomo
+          charged_count_per_sent: 0
+          scheduled_at: '2020-01-31T23:59:59+09:00'
+          limited_at: '2020-01-31T23:59:59+09:00'
+          sent_at: '2020-01-31T23:59:59+09:00'
+          received_at: '2020-01-31T23:59:59+09:00'
+          charged_at: '2020-01-31T23:59:59+09:00'
+          created_at: '2020-01-31T23:59:59+09:00'
+          updated_at: '2020-01-31T23:59:59+09:00'
+      properties:
+        id:
+          type: string
+          example: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+          description: メッセージID
+          format: uuid
+        object:
+          type: string
+          default: message
+          example: message
+          description: オブジェクトの型
+          enum:
+            - message
+        service_id:
+          type: integer
+          example: 1
+          description: サービス設定ID
+        billing_address_id:
+          type: integer
+          description: 請求先ID
+          example: 1
+        to:
+          type: string
+          example: '09012345678'
+          description: 送信先電話番号
+          pattern: '^[0-9]{11}$'
+          readOnly: true
+        body:
+          type: string
+          example: 本文
+          description: 本文
+          readOnly: true
+        tags:
+          type: array
+          description: タグ
+          items:
+            type: string
+        is_shorten:
+          type: boolean
+          description: 短縮URL
+        result:
+          type: string
+          enum:
+            - done
+            - processing
+          description: 結果
+        status:
+          type: string
+          enum:
+            - done
+            - waiting
+            - error
+            - canceled
+          description: 状態
+        sent_result:
+          type: string
+          enum:
+            - none
+            - received
+            - unconnected
+            - error
+            - unknown
+          description: 送達結果
+        carrier:
+          type: string
+          enum:
+            - docomo
+            - softbank
+            - au
+            - rakuten
+            - checking
+            - unknown
+          description: キャリア
+        charged_count_per_sent:
+          type: integer
+          description: 課金対象通数
+          example: 1
+        scheduled_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信予定日時<br>（ISO 8601形式）
+          format: date-time
+        limited_at:
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信限度日時<br>（ISO 8601形式）
+          format: date-time
+          type: string
+        sent_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 送信日時<br>（ISO 8601形式）
+          format: date-time
+        received_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 着信日時<br>（ISO 8601形式）
+          format: date-time
+        charged_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 課金確定日時<br>（ISO 8601形式）
+          format: date-time
+        created_at:
+          type: string
+          example: '2020-01-31T23:59:59+09:00'
+          description: 受付日時<br>（ISO 8601形式）
+          format: date-time
+        updated_at:
+          type: string
+          description: 更新日時<br>（ISO 8601形式）
+          readOnly: true
+      required:
+        - id
+        - object
+        - service_id
+        - billing_address_id
+        - to
+        - body
+        - result
+        - status
+        - sent_result
+        - carrier
+        - charged_count_per_sent
+        - created_at
+        - updated_at
+    Error:
+      type: object
+      x-internal: true
+      x-examples:
+        validation_error:
+          object: error
+          code: validation_error
+          message: バリデーションエラーが発生しました
+          errors:
+            key:
+              - エラー詳細1
+              - エラー詳細2
+      title: エラー
+      properties:
+        object:
+          type: string
+          default: error
+          example: error
+          description: オブジェクトの型
+          enum:
+            - error
+          readOnly: true
+        code:
+          type: string
+          description: エラーコード
+          enum:
+            - unauthentication
+            - invalid_tenant
+            - model_not_found
+            - validation_error
+            - can_not_cancel_message
+            - unknown
+          readOnly: true
+        message:
+          type: string
+          description: エラーメッセージ
+          readOnly: true
+        errors:
+          type: object
+          example:
+            key:
+              - エラー詳細1
+              - エラー詳細2
+          description: |-
+            エラーの詳細をエラーが発生したリソースのプロパティ毎に返します。<br />
+            オブジェクトのプロパティ名は、エラーが発生したリソースのプロパティ名です。<br />
+            オブジェクトの値は、発生したすべてのエラーメッセージ（配列）です。
+          readOnly: true
+      required:
+        - object
+        - code
+        - message
+  parameters:
+    ApiVersion:
+      name: Karaden-Version
+      in: header
+      schema:
+        type: string
+        default: '2023-01-01'
+        example: '2023-01-01'
+      description: APIバージョン<br />指定されない場合、空電で管理するAPIバージョンで処理されます。
+    TenantId:
+      name: tenant_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: テナントID
+    MessageId:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: メッセージID
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 1
+      description: ページ
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+      description: 1ページあたりの取得件数<br>最大100まで
+    Status:
+      name: status
+      in: query
+      schema:
+        type: string
+        enum:
+          - done
+          - waiting
+          - error
+          - canceled
+      description: '状態<br>done: 送信済<br>waiting: 送信待ち<br>error: 送信エラー<br>canceled: 送信キャンセル'
+    Result:
+      name: result
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - done
+          - processing
+      description: '結果<br>done: 完了<br>processing: 処理中'
+    SentResult:
+      name: sent_result
+      in: query
+      schema:
+        type: string
+        enum:
+          - none
+          - received
+          - unconnected
+          - error
+          - unknown
+      description: '送達結果<br>none: 送達結果なし<br>received: 着信済<br>unconnected: 圏外<br>error: エラー<br>unknown: 不明'
+security:
+  - Bearer: []
+paths:
+  '/{tenant_id}/messages':
+    post:
+      tags:
+        - メッセージ
+      summary: メッセージ送信
+      description: メッセージ送信する
+      operationId: post-tenant_id-messages-message_id
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              examples:
+                example-1:
+                  value:
+                    id: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+                    object: message
+                    service_id: 1
+                    billing_address_id: 1
+                    to: '09012345678'
+                    body: 本文
+                    tags:
+                      - string
+                    is_shorten: true
+                    result: done
+                    status: done
+                    sent_result: none
+                    carrier: docomo
+                    charged_count_per_sent: 0
+                    scheduled_at: '2020-01-31T23:59:59+09:00'
+                    limited_at: '2020-01-31T23:59:59+09:00'
+                    sent_at: '2020-01-31T23:59:59+09:00'
+                    received_at: '2020-01-31T23:59:59+09:00'
+                    charged_at: '2020-01-31T23:59:59+09:00'
+                    created_at: '2020-01-31T23:59:59+09:00'
+                    updated_at: '2020-01-31T23:59:59+09:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalid_tenant:
+                  value:
+                    object: error
+                    code: invalid_tenant
+                    message: 不正なテナントIDが指定されています
+                    errors: null
+                invalid_version:
+                  value:
+                    object: error
+                    code: invalid_version
+                    message: 不正なバージョンが指定されています
+                    errors: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                unauthentication:
+                  value:
+                    object: error
+                    code: unauthentication
+                    message: 認証に失敗しました、指定されているトークンは利用できません
+                    errors: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                model_not_found:
+                  value:
+                    object: error
+                    code: model_not_found
+                    message: 対象となるモデルが見つかりませんでした、または指定されたトークンでは操作できない可能性があります。
+                    errors: null
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    object: error
+                    code: validation_error
+                    message: バリデーションエラーが発生しました
+                    errors:
+                      key:
+                        - エラー詳細1
+                        - エラー詳細2
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                unknown:
+                  value:
+                    object: error
+                    code: unknown
+                    message: 不明なエラーが発生しました
+                    errors: null
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Message'
+            examples:
+              example-1:
+                value:
+                  id: 999
+                  object: message
+                  service_id: 999
+                  to: 0
+                  body: 本文
+                  'tags[]':
+                    - タグ１
+                    - タグ２
+                  scheduled_at: '2020-01-31T23:59:59+09:00'
+            encoding:
+              'tags[]':
+                style: form
+                explode: true
+        description: ''
+    get:
+      tags:
+        - メッセージ
+      summary: メッセージ取得(一覧)
+      description: メッセージ取得(一覧)する
+      operationId: get-tenant_id-messages
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    default: list
+                    example: list
+                    description: オブジェクトの型
+                    readOnly: true
+                  has_more:
+                    type: boolean
+                  data:
+                    type: array
+                    uniqueItems: true
+                    description: 取得したデータ
+                    items:
+                      $ref: '#/components/schemas/Message'
+                    readOnly: true
+                required:
+                  - object
+                  - has_more
+                  - data
+                readOnly: true
+              examples:
+                example-1:
+                  value:
+                    object: list
+                    has_more: true
+                    data:
+                      - id: 82bdf9de-a532-4bf5-86bc-c9a1366e5f4a
+                        object: message
+                        service_id: 1
+                        billing_address_id: 1
+                        to: '09012345678'
+                        body: 本文
+                        tags:
+                          - string
+                        is_shorten: true
+                        result: done
+                        status: done
+                        sent_result: none
+                        carrier: docomo
+                        charged_count_per_sent: 0
+                        scheduled_at: '2020-01-31T23:59:59+09:00'
+                        limited_at: '2020-01-31T23:59:59+09:00'
+                        sent_at: '2020-01-31T23:59:59+09:00'
+                        received_at: '2020-01-31T23:59:59+09:00'
+                        charged_at: '2020-01-31T23:59:59+09:00'
+                        created_at: '2020-01-31T23:59:59+09:00'
+                        updated_at: '2020-01-31T23:59:59+09:00'
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+        - schema:
+            type: integer
+            example: 1
+          in: query
+          name: service_id
+          description: サービス設定ID
+        - schema:
+            type: string
+            example: '09012345678'
+          in: query
+          name: to
+          description: 送信先番号
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Result'
+        - $ref: '#/components/parameters/SentResult'
+        - schema:
+            type: string
+          in: query
+          name: tag
+          description: タグ
+        - schema:
+            type: string
+            format: date-time
+            example: '2020-01-31T23:59:59+09:00'
+          in: query
+          name: start_at
+          description: 受付日時（開始）<br>（ISO 8601形式）
+        - schema:
+            type: string
+            format: date-time
+            example: '2020-01-31T23:59:59+09:00'
+          in: query
+          name: end_at
+          description: 受付日時（終了）<br>（ISO 8601形式）
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+    parameters:
+      - $ref: '#/components/parameters/TenantId'
+  '/{tenant_id}/messages/{message_id}':
+    get:
+      tags:
+        - メッセージ
+      summary: メッセージ取得(単体)
+      description: メッセージ取得(単体)する
+      operationId: get-tenant_id-messages-message_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+    parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/MessageId'
+  '/{tenant_id}/messages/{message_id}/cancel':
+    post:
+      tags:
+        - メッセージ
+      summary: メッセージ送信キャンセル
+      description: |-
+        メッセージ送信キャンセルする
+        メッセージは送信予約日時の5分前までキャンセル可能
+      operationId: post-tenant_id-messages-message_id-cancel
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example-1:
+                  value:
+                    object: error
+                    code: can_not_cancel_message
+                    message: メッセージのキャンセルができません、予約投稿のメッセージは開始5分前までキャンセル可能です。
+                    errors: null
+    parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/MessageId'
+  /callback/messages/test/sent:
+    post:
+      summary: メッセージ送達結果通知
+      operationId: post-callback-messages-test-sent
+      responses:
+        '200':
+          description: OK
+      description: メッセージを送信した後、serviceに指定されているエンドポイントへ送達結果を通知する
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+      tags:
+        - メッセージ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SentMessage'
+        description: ''

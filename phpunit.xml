@@ -1,0 +1,20 @@
+<phpunit bootstrap="./vendor/autoload.php" colors="true">
+    <php>
+        <env name="IS_RUNNING_PHPUNIT" value="true"/>
+    </php>
+    <testsuites>
+        <testsuite name="Karaden PHP Test Suite">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>src</directory>
+        </whitelist>
+    </filter>
+    <groups>
+        <exclude>
+            <group>mock</group>
+        </exclude>
+    </groups>
+</phpunit>

@@ -1,0 +1,16 @@
+version: "3.5"
+
+services:
+  php:
+    build:
+      context: ./docker/php
+      args:
+        USERNAME: ${USERNAME-vscode}
+        USER_UID: ${USER_UID-1000}
+        USER_GID: ${USER_GID-1000}
+        TIME_ZONE: ${PHP_TIME_ZONE-UTC}
+        LOCALE: ${LOCALE-C}
+    tty: true
+    volumes:
+      - ../:/var/task
+    working_dir: /var/task

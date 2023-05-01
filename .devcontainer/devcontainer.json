@@ -1,0 +1,33 @@
+{
+	"name": "php-sdk",
+	// Sets the run context to one level up instead of the .devcontainer folder.
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+	"service": "php",
+	"workspaceFolder": "/var/task",
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"[php]": {
+			"editor.formatOnSave": false,
+			"editor.renderWhitespace": "all"
+		},
+		"php.suggest.basic": false,
+		"php.validate.enable": false,
+		"search.useIgnoreFiles": false
+	},
+	"extensions": [
+		"xdebug.php-debug",
+		"bmewburn.vscode-intelephense-client",
+		"humao.rest-client"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	//"forwardPorts": [8080]
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "vscode"
+}

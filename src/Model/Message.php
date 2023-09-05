@@ -69,46 +69,46 @@ class Message extends Requestable
         return $this->getProperty('charged_count_per_sent');
     }
 
-    public function getScheduledAt(): DateTimeInterface
+    public function getScheduledAt(): ?DateTimeInterface
     {
         $scheduledAt = $this->getProperty('scheduled_at');
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $scheduledAt);
+        return $scheduledAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $scheduledAt) : null;
     }
 
-    public function getLimitedAt(): DateTimeInterface
+    public function getLimitedAt(): ?DateTimeInterface
     {
         $limitedAt = $this->getProperty("limited_at");
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $limitedAt);
+        return $limitedAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $limitedAt) : null;
     }
 
-    public function getSentAt(): DateTimeInterface
+    public function getSentAt(): ?DateTimeInterface
     {
         $sentAt = $this->getProperty("sent_at");
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $sentAt);
+        return $sentAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $sentAt) : null;
     }
 
-    public function getReceivedAt(): DateTimeInterface
+    public function getReceivedAt(): ?DateTimeInterface
     {
         $receivedAt = $this->getProperty('received_at');
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $receivedAt);
+        return $receivedAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $receivedAt) : null;
     }
 
-    public function getChargedAt(): DateTimeInterface
+    public function getChargedAt(): ?DateTimeInterface
     {
         $chargedAt = $this->getProperty('charged_at');
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $chargedAt);
+        return $chargedAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $chargedAt) : null;
     }
 
-    public function getCreatedAt(): DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         $createdAt = $this->getProperty('created_at');
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $createdAt);
+        return $createdAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $createdAt) : null;
     }
 
-    public function getUpdatedAt(): DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeInterface
     {
         $updatedAt = $this->getProperty('updated_at');
-        return DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $updatedAt);
+        return $updatedAt ? DateTimeImmutable::createFromFormat(DateTimeImmutable::ATOM, $updatedAt) : null;
     }
 
     public static function create(MessageCreateParams $params, ?RequestOptions $requestOptions = null): Message

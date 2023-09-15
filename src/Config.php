@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 
 class Config
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.2';
     const DEFAULT_API_BASE = 'https://prg.karaden.jp/api';
     const DEFALUT_API_VERSION = '2023-01-01';
 

@@ -250,88 +250,96 @@ class MessageTest extends TestCase
         $this->assertEquals($value, $message->getCarrier());
     }
 
+    public function dateProvider(): array
+    {
+        return [
+            ['2022-12-09T00:00:00+09:00'],
+            [null],
+        ];
+    }
+
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function scheduledAtを出力できる()
+    public function scheduledAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('scheduled_at', $value);
         
-        $this->assertEquals($value, $message->getScheduledAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getScheduledAt() ? $message->getScheduledAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function limitedAtを出力できる()
+    public function limitedAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('limited_at', $value);
         
-        $this->assertEquals($value, $message->getLimitedAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getLimitedAt() ? $message->getLimitedAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function sentAtを出力できる()
+    public function sentAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('sent_at', $value);
 
-        $this->assertEquals($value, $message->getSentAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getSentAt() ? $message->getSentAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function receivedAtを出力できる()
+    public function receivedAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('received_at', $value);
 
-        $this->assertEquals($value, $message->getReceivedAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getReceivedAt() ? $message->getReceivedAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function chargedAtを出力できる()
+    public function chargedAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('charged_at', $value);
 
-        $this->assertEquals($value, $message->getChargedAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getChargedAt() ? $message->getChargedAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function createdAtを出力できる()
+    public function createdAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('created_at', $value);
 
-        $this->assertEquals($value, $message->getCreatedAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getCreatedAt() ? $message->getCreatedAt()->format(DateTimeInterface::ATOM) : null);
     }
 
     /**
      * @test
+     * @dataProvider dateProvider
      */
-    public function updatedAtを出力できる()
+    public function updatedAtを出力できる($value)
     {
-        $value = '2022-12-09T00:00:00+09:00';
         $message = new Message();
         $message->setProperty('updated_at', $value);
 
-        $this->assertEquals($value, $message->getUpdatedAt()->format(DateTimeInterface::ATOM));
+        $this->assertEquals($value, $message->getUpdatedAt() ? $message->getUpdatedAt()->format(DateTimeInterface::ATOM) : null);
     }
 }
  

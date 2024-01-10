@@ -10,6 +10,9 @@ ENV LANG=${LOCALE}
 ENV LANGUAGE=${LANGUAGE}
 ENV TZ=${TIME_ZONE}
 
+RUN curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --yes --dearmor -o /usr/share/keyrings/yarnkey.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" > /etc/apt/sources.list.d/yarn.list
+
 RUN apt-get update \
   && apt-get install -y locales \
   && locale-gen ja_JP.UTF-8 \

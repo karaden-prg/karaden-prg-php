@@ -53,6 +53,7 @@ class MockTest extends TestCase
         $this->assertCount(1, $tags);
         $this->assertEquals('string', $tags[0]);
         $this->assertEquals(true, $message->isShorten());
+        $this->assertEquals(true, $message->isShortenClicked());
         $this->assertEquals('done', $message->getResult());
         $this->assertEquals('done', $message->getStatus());
         $this->assertEquals('none', $message->getSentResult());
@@ -96,6 +97,7 @@ class MockTest extends TestCase
         $this->assertCount(1, $tags);
         $this->assertEquals('string', $tags[0]);
         $this->assertEquals(true, $message->isShorten());
+        $this->assertEquals(true, $message->isShortenClicked());
         $this->assertEquals('done', $message->getResult());
         $this->assertEquals('done', $message->getStatus());
         $this->assertEquals('none', $message->getSentResult());
@@ -133,6 +135,7 @@ class MockTest extends TestCase
         $this->assertCount(1, $tags);
         $this->assertEquals('string', $tags[0]);
         $this->assertEquals(true, $message->isShorten());
+        $this->assertEquals(true, $message->isShortenClicked());
         $this->assertEquals('done', $message->getResult());
         $this->assertEquals('done', $message->getStatus());
         $this->assertEquals('none', $message->getSentResult());
@@ -170,6 +173,7 @@ class MockTest extends TestCase
         $this->assertCount(1, $tags);
         $this->assertEquals('string', $tags[0]);
         $this->assertEquals(true, $message->isShorten());
+        $this->assertEquals(true, $message->isShortenClicked());
         $this->assertEquals('done', $message->getResult());
         $this->assertEquals('done', $message->getStatus());
         $this->assertEquals('none', $message->getSentResult());

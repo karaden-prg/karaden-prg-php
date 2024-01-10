@@ -44,6 +44,11 @@ class Message extends Requestable
         return $this->getProperty('is_shorten');
     }
 
+    public function isShortenClicked(): ?bool
+    {
+        return $this->getProperty('is_shorten_clicked');
+    }
+
     public function getResult(): string
     {
         return $this->getProperty('result');

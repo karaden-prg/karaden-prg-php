@@ -217,6 +217,32 @@ class MessageTest extends TestCase
     /**
      * @test
      */
+    public function APIバージョン20230101ではisShortenClickedはnullが出力される()
+    {
+        // APIバージョン2023-01-01ではnullが返ってくる
+        $value = null;
+        $message = new Message();
+        $message->setProperty('is_shorten_clicked', null);
+
+        $this->assertEquals($value, $message->isShortenClicked());
+    }
+
+    /**
+     * @test
+     */
+    public function APIバージョン20231201ではisShortenClickedはbooleanが出力される()
+    {
+        // APIバージョン2023-12-01ではbooleanが返ってくる
+        $value = true;
+        $message = new Message();
+        $message->setProperty('is_shorten_clicked', $value);
+
+        $this->assertEquals($value, $message->isShortenClicked());
+    }
+
+    /**
+     * @test
+     */
     public function resultを出力できる()
     {
         $value = 'none';

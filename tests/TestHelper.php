@@ -13,7 +13,7 @@ class TestHelper
     const API_BASE = 'http://localhost:4010';
     const API_KEY = '123';
     const TENANT_ID = '159bfd33-b9b7-f424-4755-c119b324591d';
-    const API_VERSION = '2023-12-01';
+    const API_VERSION = '2024-03-01';
 
     public static function getDefaultRequestOptionsBuilder(): RequestOptionsBuilder
     {
@@ -44,5 +44,12 @@ class TestHelper
         $property = $reflection->getProperty($name);
         $property->setAccessible(true);
         $property->setValue($object, $value);
+    }
+
+    public static function removeRequestableHttpClient(string $class): void
+    {
+        $reflection = new ReflectionClass($class);
+        $request = $reflection->getStaticPropertyValue('requestor');
+        static::setProtectedProperty($request, 'httpClient', null);
     }
 }

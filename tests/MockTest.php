@@ -4,11 +4,17 @@ namespace Karaden;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Karaden\Model\BulkFile;
+use Karaden\Model\BulkMessage;
+use Karaden\Model\Error;
 use Karaden\Model\Message;
 use Karaden\Param\Message\MessageCancelParams;
 use Karaden\Param\Message\MessageCreateParams;
 use Karaden\Param\Message\MessageDetailParams;
 use Karaden\Param\Message\MessageListParams;
+use Karaden\Param\Message\Bulk\BulkMessageCreateParams;
+use Karaden\Param\Message\Bulk\BulkMessageListMessageParams;
+use Karaden\Param\Message\Bulk\BulkMessageShowParams;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -186,5 +192,78 @@ class MockTest extends TestCase
         $this->assertEquals($datetime, $message->getCreatedAt());
         $this->assertEquals($datetime, $message->getUPdatedAt());
     }
+
+    /**
+     * @test
+     */
+    public function 一括送信用のアップロード先URL取得()
+    {
+        $datetime = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, '2020-01-31T23:59:59+09:00');
+        $requestOptions = TestHelper::getDefaultRequestOptionsBuilder()
+            ->build();
+        $bulkFile = BulkFile::create($requestOptions);
+
+        $this->assertEquals('82bdf9de-a532-4bf5-86bc-c9a1366e5f4a', $bulkFile->getId());
+        $this->assertEquals('bulk_file', $bulkFile->getObject());
+        $this->assertEquals('https://example.com', $bulkFile->getUrl());
+        $this->assertEquals($datetime, $bulkFile->getCreatedAt());
+        $this->assertEquals($datetime, $bulkFile->getExpiresAt());
+    }
+
+    /**
+     * @test
+     */
+    public function 一括送信()
+    {
+        $datetime = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, '2020-01-31T23:59:59+09:00');
+        $params = BulkMessageCreateParams::newBuilder()
+            ->withBulkFileId('c439f89c-1ea3-7073-7021-1f127a850437')
+            ->build();
+        $requestOptions = TestHelper::getDefaultRequestOptionsBuilder()
+            ->build();
+        $bulkMessage = BulkMessage::create($params, $requestOptions);
+
+        $this->assertEquals('82bdf9de-a532-4bf5-86bc-c9a1366e5f4a', $bulkMessage->getId());
+        $this->assertEquals('bulk_message', $bulkMessage->getObject());
+        $this->assertEquals('done', $bulkMessage->getStatus());
+        $this->assertInstanceOf(Error::class, $bulkMessage->getError());
+        $this->assertEquals($datetime, $bulkMessage->getCreatedAt());
+        $this->assertEquals($datetime, $bulkMessage->getUpdatedAt());
+    }
+
+    /**
+     * @test
+     */
+    public function 一括送信状態取得()
+    {
+        $datetime = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, '2020-01-31T23:59:59+09:00');
+        $params = BulkMessageShowParams::newBuilder()
+            ->withId('c439f89c-1ea3-7073-7021-1f127a850437')
+            ->build();
+        $requestOptions = TestHelper::getDefaultRequestOptionsBuilder()
+            ->build();
+        $bulkMessage = BulkMessage::show($params, $requestOptions);
+
+        $this->assertEquals('82bdf9de-a532-4bf5-86bc-c9a1366e5f4a', $bulkMessage->getId());
+        $this->assertEquals('bulk_message', $bulkMessage->getObject());
+        $this->assertEquals('done', $bulkMessage->getStatus());
+        $this->assertInstanceOf(Error::class, $bulkMessage->getError());
+        $this->assertEquals($datetime, $bulkMessage->getCreatedAt());
+        $this->assertEquals($datetime, $bulkMessage->getUpdatedAt());
+    }
+
+    /**
+     * @test
+     */
+    public function 一括送信結果取得()
+    {
+        $params = BulkMessageListMessageParams::newBuilder()
+            ->withId('82bdf9de-a532-4bf5-86bc-c9a1366e5f4a')
+            ->build();
+        $requestOptions = TestHelper::getDefaultRequestOptionsBuilder()
+            ->build();
+        $output = BulkMessage::listMessage($params, $requestOptions);
+
+        $this->assertEquals($output, null);
+    }
 }
- 

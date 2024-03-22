@@ -2,6 +2,12 @@
 
 namespace Karaden;
 
+use Exception;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use Karaden\Exception\FileUploadFailedException;
+use Karaden\Model\BulkFile;
+use Karaden\Model\BulkMessage;
 use Karaden\Model\Collection;
 use Karaden\Model\KaradenObject;
 use Karaden\Model\Error;
@@ -14,6 +20,8 @@ class Utility
         Error::OBJECT_NAME => Error::class,
         Collection::OBJECT_NAME => Collection::class,
         Message::OBJECT_NAME => Message::class,
+        BulkFile::OBJECT_NAME => BulkFile::class,
+        BulkMessage::OBJECT_NAME => BulkMessage::class,
     ];
 
     public static function convertToKaradenObject(object $contents, RequestOptions $requestOptions)
@@ -62,5 +70,27 @@ class Utility
         }
 
         return false;
+    }
+
+    public static function putSignedUrl(string $signedUrl, string $filename, string $contentType = 'application/octet-stream'): void
+    {
+        try {
+            $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
+            $streamFactory = Psr17FactoryDiscovery::findStreamFactory();
+            $httpClient = Config::$httpClient ?? Psr18ClientDiscovery::find();
+
+            $request = $requestFactory->createRequest('PUT', $signedUrl)
+                ->withHeader('Content-Type', $contentType)
+                ->withBody($streamFactory->createStreamFromFile($filename));
+            $response = $httpClient->sendRequest($request);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new FileUploadFailedException();
+            }
+        } catch (FileUploadFailedException $e1) {
+            throw $e1;
+        } catch (Exception $e2) {
+            throw new FileUploadFailedException($e2);
+        }
     }
 }

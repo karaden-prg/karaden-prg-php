@@ -2,7 +2,6 @@
 
 namespace Karaden\Net;
 
-use Karaden\Model\KaradenObject;
 use Karaden\Model\Error;
 use Karaden\Exception\UnauthorizedException;
 use Karaden\Exception\KaradenException;
@@ -18,10 +17,11 @@ use Karaden\RequestOptions;
 use Karaden\Utility;
 
 
-class Response implements ResponseInterface
+class NoContentsResponse implements ResponseInterface
 {
-    protected ?KaradenObject $object = null;
     protected ?KaradenException $error = null;
+    protected ?int $statsuCode = null;
+    protected ?array $headers = null;
 
     const errors = [
         BadRequestException::STATUS_CODE => BadRequestException::class,
@@ -44,17 +44,17 @@ class Response implements ResponseInterface
 
     public function getObject()
     {
-        return $this->object;
+        throw new NotImplementationException();
     }
 
     public function getStatusCode()
     {
-        throw new NotImplementationException();
+        return $this->statsuCode;
     }
 
     public function getHeaders()
     {
-        throw new NotImplementationException();
+        return $this->headers;
     }
 
     public function __construct(\Psr\Http\Message\ResponseInterface $response, RequestOptions $requestOptions)
@@ -64,25 +64,25 @@ class Response implements ResponseInterface
 
     protected function interpret(\Psr\Http\Message\ResponseInterface $response, RequestOptions $requestOptions)
     {
-        $statusCode = $response->getStatusCode();
-        $body = $response->getBody()->getContents();
-        $contents = json_decode($body);
-        $error = json_last_error();
-        if (null === $contents && JSON_ERROR_NONE !== $error) {
-            $headers = $response->getHeaders();
-            $this->error = new UnexpectedValueException($statusCode, $headers, $body);
-            return;
-        }
+        $this->statsuCode = $response->getStatusCode();
+        $this->headers = array_change_key_case($response->getHeaders(), CASE_LOWER);
+        if ($this->statsuCode >= 400) {
+            $body = $response->getBody()->getContents();
+            $contents = json_decode($body);
+            $error = json_last_error();
+            if (null === $contents && JSON_ERROR_NONE !== $error) {
+                $headers = $response->getHeaders();
+                $this->error = new UnexpectedValueException($this->statsuCode, $headers, $body);
+                return;
+            }
 
-        $object = Utility::convertToKaradenObject($contents, $requestOptions);
-        if (200 > $statusCode || 400 <= $statusCode) {
+            $object = Utility::convertToKaradenObject($contents, $requestOptions);
             $headers = $response->getHeaders();
             $this->error = $object->getObject() == 'error' ?
-                $this->handleError($statusCode, $headers, $body, $object) :
-                new UnexpectedValueException($statusCode, $headers, $body);
+                    $this->handleError($this->statsuCode, $headers, $body, $object) :
+                    new UnexpectedValueException($this->statsuCode, $headers, $body);
         }
 
-        $this->object = $object;
     }
 
     protected function handleError(int $statusCode, array $headers, string $body, Error $error): KaradenException

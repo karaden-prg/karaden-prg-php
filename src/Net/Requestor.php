@@ -34,7 +34,7 @@ class Requestor implements RequestorInterface
         $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
     }
 
-    public function __invoke(string $method, string $path, ?string $contentType = null, ?array $params = null, ?array $data = null, ?RequestOptions $requestOptions = null): ResponseInterface
+    public function __invoke(string $method, string $path, ?string $contentType = null, ?array $params = null, ?array $data = null, ?RequestOptions $requestOptions = null, bool $isNoContents = false, bool $allowRedirects = true): ResponseInterface
     {
         $requestOptions = Config::asRequestOptions()->merge($requestOptions);
         $requestOptions->validate();
@@ -46,14 +46,14 @@ class Requestor implements RequestorInterface
             'Content-Type' => $contentType,
         ];
 
-        $plugins = [
+        $plugins = array_filter([
             new BaseUriPlugin(Psr17FactoryDiscovery::findUriFactory()->createUri($requestOptions->getBaseUri())),
             new HeaderDefaultsPlugin(array_filter($headers, fn($value, $key) => $value, ARRAY_FILTER_USE_BOTH)),
             new AuthenticationPlugin(new Bearer($requestOptions->apiKey)),
             new LoggerPlugin(Config::$logger ?? new NullLogger(), Config::$formatter),
             new DecoderPlugin(),
-            new RedirectPlugin(),
-        ];
+            $allowRedirects ? new RedirectPlugin() : null
+        ], fn($plugin) => !is_null($plugin));
         $httpClient = new PluginClient($this->httpClient ?? Config::$httpClient ?? HttpClientDiscovery::find(), $plugins);
 
         $request = $this->requestFactory->createRequest($method, $path . $this->buildQuery($params));
@@ -62,7 +62,7 @@ class Requestor implements RequestorInterface
         }
 
         $response = $httpClient->sendRequest($request);
-        return new Response($response, $requestOptions);
+        return !$isNoContents ? new Response($response, $requestOptions) : new NoContentsResponse($response, $requestOptions);
     }
 
     protected function buildQuery(?array $params): string

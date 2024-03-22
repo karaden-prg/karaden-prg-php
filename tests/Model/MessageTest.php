@@ -38,6 +38,11 @@ class MessageTest extends TestCase
         };
     }
 
+    protected function tearDown(): void
+    {
+        TestHelper::removeRequestableHttpClient(Message::class);
+    }
+
     /**
      * @test
      */
@@ -368,4 +373,3 @@ class MessageTest extends TestCase
         $this->assertEquals($value, $message->getUpdatedAt() ? $message->getUpdatedAt()->format(DateTimeInterface::ATOM) : null);
     }
 }
- 

@@ -2,10 +2,16 @@
 
 namespace Karaden;
 
+use Exception;
+use GuzzleHttp\Psr7\Response;
+use Http\Message\RequestMatcher;
+use Http\Mock\Client;
+use Karaden\Exception\FileUploadFailedException;
 use Karaden\Model\KaradenObject;
 use Karaden\Model\Message;
 use Karaden\RequestOptions;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
 
 class UtilityTest extends TestCase
 {
@@ -34,6 +40,11 @@ class UtilityTest extends TestCase
 
     protected function setUp(): void
     {
+    }
+
+    protected function tearDown(): void
+    {
+        Config::$httpClient = null;
     }
 
     /**
@@ -151,5 +162,109 @@ class UtilityTest extends TestCase
         $this->assertInstanceOf($class, $object->getProperty('test')[0]);
         $this->assertEquals($item['test'], $object->getProperty('test')[0]->getProperty('test'));
     }
+
+    /**
+     * @test
+     */
+    public function 指定のURLにfileパスのファイルをPUTメソッドでリクエストする()
+    {
+        $client = new Client();
+        $requestMatcher = new class implements RequestMatcher
+        {
+            public function matches(RequestInterface $request): bool
+            {
+                return true;
+            }
+        };
+
+        $file = tmpfile();
+        $filename = stream_get_meta_data($file)['uri'];
+        $signedUrl = 'https://example.com/';
+
+        $client->on($requestMatcher, function (RequestInterface $request) use ($signedUrl, $filename){
+            $this->assertEquals('PUT', $request->getMethod());
+            $this->assertEquals($signedUrl, $request->getUri());
+            $this->assertEquals($filename, $request->getBody()->getMetadata()['uri']);
+            $this->assertEquals('application/octet-stream', $request->getHeader('Content-Type')[0]);
+
+            return new Response(200, [], '');
+        });
+
+        Config::$httpClient = $client;
+        Utility::putSignedUrl($signedUrl, $filename);
+    }
+
+    /**
+     * @test
+     */
+    public function レスポンスコードが200以外だとFileUploadFailedExceptionが返る()
+    {
+        $client = new Client();
+        $requestMatcher = new class implements RequestMatcher
+        {
+            public function matches(RequestInterface $request): bool
+            {
+                return true;
+            }
+        };
+
+        $file = tmpfile();
+        $filename = stream_get_meta_data($file)['uri'];
+        $signedUrl = 'https://example.com/';
+
+        $client->on($requestMatcher, fn () => new Response(403, [], ''));
+
+        Config::$httpClient = $client;
+        $this->expectException(FileUploadFailedException::class);
+        Utility::putSignedUrl($signedUrl, $filename);
+    }
+
+    /**
+     * @test
+     */
+    public function 例外が発生するとFileUploadFailedExceptionをリスローする()
+    {
+        $client = new Client();
+        $client->addException(new Exception());
+
+        $file = tmpfile();
+        $filename = stream_get_meta_data($file)['uri'];
+        $signedUrl = 'https://example.com/';
+
+        Config::$httpClient = $client;
+        $this->expectException(FileUploadFailedException::class);
+        Utility::putSignedUrl($signedUrl, $filename);
+    }
+
+    /**
+     * @test
+     */
+    public function ContentTypeを指定できる()
+    {
+        $client = new Client();
+        $requestMatcher = new class implements RequestMatcher
+        {
+            public function matches(RequestInterface $request): bool
+            {
+                return true;
+            }
+        };
+
+        $file = tmpfile();
+        $filename = stream_get_meta_data($file)['uri'];
+        $signedUrl = 'https://example.com/';
+        $contentType = 'text/csv';
+
+        $client->on($requestMatcher, function (RequestInterface $request) use ($signedUrl, $filename, $contentType){
+            $this->assertEquals('PUT', $request->getMethod());
+            $this->assertEquals($signedUrl, $request->getUri());
+            $this->assertEquals($filename, $request->getBody()->getMetadata()['uri']);
+            $this->assertEquals($contentType, $request->getHeader('Content-Type')[0]);
+
+            return new Response(200, [], '');
+        });
+
+        Config::$httpClient = $client;
+        Utility::putSignedUrl($signedUrl, $filename, $contentType);
+    }
 }
- 

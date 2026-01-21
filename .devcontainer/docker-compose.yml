@@ -10,7 +10,8 @@ services:
         USER_GID: ${USER_GID-1000}
         TIME_ZONE: ${PHP_TIME_ZONE-UTC}
         LOCALE: ${LOCALE-C}
+        WORKING_DIR: ${WORKING_DIR}
     tty: true
     volumes:
-      - ../:/var/task
-    working_dir: /var/task
+      - ../:${WORKING_DIR}
+    working_dir: ${WORKING_DIR}

@@ -1,0 +1,75 @@
+stages:
+  - test
+
+variables:
+  DEVCONTAINER_DIR: .devcontainer
+  DOCKER_COMPOSE_FILE: $DEVCONTAINER_DIR/docker-compose.yml
+  ENV_FILE: $DEVCONTAINER_DIR/.env
+  DOCKER_COMPOSE: docker compose -f $DOCKER_COMPOSE_FILE --env-file $ENV_FILE
+
+create_env_file:
+  stage: .pre
+  script:
+    - echo -e "COMPOSE_PROJECT_NAME=karaden-prg-php" >> $ENV_FILE
+    - echo -e "USERNAME=$USER" >> $ENV_FILE
+    - echo -e "USER_UID=$(id -u)" >> $ENV_FILE
+    - echo -e "USER_GID=$(id -g)" >> $ENV_FILE
+    - echo -e "LOCALE=ja_JP.UTF-8" >> $ENV_FILE
+    - echo -e "PHP_TIME_ZONE=Asia/Tokyo" >> $ENV_FILE
+    - echo -e "WORKING_DIR=$(pwd)" >> $ENV_FILE
+  rules:
+    - !reference [phpstan, rules]
+  
+setup_docker_compose:
+  stage: .pre
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - $DOCKER_COMPOSE rm
+    - docker volume prune --force
+    - docker image prune --force
+    - $DOCKER_COMPOSE up --no-start
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - .gitlab-ci.yml
+        - $DOCKER_COMPOSE_FILE
+        - $DEVCONTAINER_DIR/docker/php/Dockerfile
+ 
+start_docker_compose:
+  stage: .pre
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - $DOCKER_COMPOSE start
+  rules:
+    - !reference [phpstan, rules]
+
+stop_docker_compose:
+  stage: .post
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - $DOCKER_COMPOSE stop
+  when: always
+  rules:
+    - !reference [phpstan, rules]
+
+phpstan:
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - $DOCKER_COMPOSE exec php composer install
+  script:
+    - $DOCKER_COMPOSE exec php vendor/bin/phpstan analyse
+  cache:
+    - key:
+        files:
+          - composer.json
+      paths:
+        - vendor
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - src/**/*
